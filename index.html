@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Hub</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    html, body { margin: 0; height: 100%; background: #0E181C; overflow: hidden; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif; }
+    iframe { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: 0; background: #0E181C; }
+    #fb { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(14, 24, 28, .92); }
+    #fb[hidden] { display: none; }
+    .card { background: #15262D; border: 1px solid #2A424C; border-radius: 16px; padding: 24px; max-width: 420px; text-align: center; color: #E8F0F2; }
+    .card h1 { margin: 0 0 8px; font-size: 22px; }
+    .card p { margin: 0 0 16px; color: #A9BBC1; line-height: 1.5; font-size: 15px; }
+    .btn { display: inline-block; background: #EC9320; color: #1B1100; font-weight: 600; font-size: 15px; padding: 10px 20px; border-radius: 10px; text-decoration: none; }
+    .btn:hover { background: #F5A63D; }
+  </style>
+</head>
+<body>
+  <iframe id="hub" title="The Hub" allow="camera; clipboard-write"></iframe>
+  <div id="fb" hidden>
+    <div class="card">
+      <h1>The Hub</h1>
+      <p>The Hub could not open inside this page. You may not be signed in to Google yet, or your browser is blocking it here.</p>
+      <a class="btn" id="open" href="#">Open The Hub</a>
+    </div>
+  </div>
+  <noscript><div class="card" style="margin:24px auto"><p>The Hub needs JavaScript. <a class="btn" href="https://script.google.com/a/macros/lostandfoundmarketing.com/s/AKfycby8LmKCT26effWDSFD0AUtQqLkQmAheNFQQ-s_vlEVXnf4WGp90Kdj-unUipOsF78Vi/exec">Open The Hub</a></p></div></noscript>
+  <script>
+    (function () {
+      // The live Hub address (the deployed web app). Nothing secret: opening it still needs a Lost and Found Google sign-in.
+      var BASE = 'https://script.google.com/a/macros/lostandfoundmarketing.com/s/AKfycby8LmKCT26effWDSFD0AUtQqLkQmAheNFQQ-s_vlEVXnf4WGp90Kdj-unUipOsF78Vi/exec';
+      var target = BASE + location.search; // hub.lostandfoundmarketing.com/?view=pto&for=x opens /exec?view=pto&for=x
+      var frame = document.getElementById('hub'), card = document.getElementById('fb'), ready = false;
+      document.getElementById('open').href = target; // the fallback opens The Hub in this same tab
+      frame.src = target;
+      // The Hub tells this page when it has opened. No message in 8 seconds (not signed in, cookies blocked, or framing switched off) = show the fallback card.
+      window.addEventListener('message', function (e) {
+        var host = ''; try { host = new URL(e.origin).hostname; } catch (x) { return; }
+        if (e.data === 'hub:ready' && /\.googleusercontent\.com$/.test(host)) { ready = true; card.hidden = true; }
+      });
+      setTimeout(function () { if (!ready) card.hidden = false; }, 8000);
+    })();
+  </script>
+</body>
+</html>
